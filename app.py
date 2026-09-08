@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import sqlite3
 
 app = Flask(__name__)
@@ -57,6 +57,52 @@ def home():
     connection.close()
 
     return render_template("index.html", tools=tools)
+
+
+@app.route("/add", methods=["GET", "POST"])
+def add_tool():
+    if request.method == "POST":
+        name = request.form["name"]
+        description = request.form["description"]
+
+        connection = get_db_connection()
+        connection.execute(
+            """
+            INSERT INTO tools (name, description, available)
+            VALUES (?, ?, 1)
+            """,
+            (name, description)
+        )
+        connection.commit()
+        connection.close()
+
+        return render_template("success.html", name=name)
+
+    return render_template("add_tool.html")
+@app.route("/request/<int:tool_id>", methods=["GET", "POST"])
+def request_tool(tool_id):
+    connection = get_db_connection()
+
+    tool = connection.execute(
+        "SELECT * FROM tools WHERE id = ?",
+        (tool_id,)
+    ).fetchone()
+
+    connection.close()
+
+    if tool is None:
+        return "Το εργαλείο δεν βρέθηκε.", 404
+
+    if request.method == "POST":
+        return render_template(
+            "request_success.html",
+            tool=tool
+        )
+
+    return render_template(
+        "request_tool.html",
+        tool=tool
+    )
 
 
 if __name__ == "__main__":

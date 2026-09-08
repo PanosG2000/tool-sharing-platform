@@ -12,11 +12,21 @@
     <p>Πλατφόρμα δανεισμού εργαλείων.</p>
 
     <h2>Διαθέσιμα εργαλεία</h2>
+	<a href="/add">+ Προσθήκη εργαλείου</a>
 
     <ul>
-        <li>Τρυπάνι Bosch</li>
-        <li>Χλοοκοπτικό</li>
-        <li>Σκάλα αλουμινίου</li>
+        {% for tool in tools %}
+            <li>
+			<strong>{{ tool["name"] }}</strong>
+			- {{ tool["description"] }}
+
+    <br>
+
+    <a href="/request/{{ tool['id'] }}">
+        Αίτημα δανεισμού
+    </a>
+</li>
+        {% endfor %}
     </ul>
 
 </body>
