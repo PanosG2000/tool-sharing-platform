@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <title>Ενημέρωση Αιτήματος</title>
+</head>
+<body>
+
+    <h1>Το αίτημα ενημερώθηκε!</h1>
+
+    {% if status == "approved" %}
+
+        <p>
+            Το αίτημα <strong>εγκρίθηκε</strong>.
+        </p>
+
+    {% else %}
+
+        <p>
+            Το αίτημα <strong>απορρίφθηκε</strong>.
+        </p>
+
+    {% endif %}
+
+    <a href="/requests">
+        Επιστροφή στα αιτήματα
+    </a>
+
+</body>
+</html>

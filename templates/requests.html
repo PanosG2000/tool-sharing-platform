@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <title>Αιτήματα Δανεισμού</title>
+</head>
+<body>
+
+    <h1>Αιτήματα Δανεισμού</h1>
+
+    {% if requests %}
+
+        {% for item in requests %}
+
+            <hr>
+
+            <h2>{{ item["tool_name"] }}</h2>
+
+            <p>
+                <strong>Δανειζόμενος:</strong>
+                {{ item["borrower"] }}
+            </p>
+
+            <p>
+                <strong>Διάρκεια:</strong>
+                {{ item["days"] }} ημέρες
+            </p>
+
+            <p>
+                <strong>Κατάσταση:</strong>
+                {{ item["status"] }}
+            </p>
+
+            {% if item["status"] == "pending" %}
+
+                <form method="POST"
+                      action="/requests/{{ item['id'] }}/approve"
+                      style="display:inline;">
+
+                    <button type="submit">
+                        Αποδοχή
+                    </button>
+
+                </form>
+
+                <form method="POST"
+                      action="/requests/{{ item['id'] }}/reject"
+                      style="display:inline;">
+
+                    <button type="submit">
+                        Απόρριψη
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>Δεν υπάρχουν αιτήματα δανεισμού.</p>
+
+    {% endif %}
+
+    <br>
+
+    <a href="/">Επιστροφή στα εργαλεία</a>
+
+</body>
+</html>

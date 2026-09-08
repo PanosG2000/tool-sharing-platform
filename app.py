@@ -16,13 +16,15 @@ def init_db():
     connection = get_db_connection()
 
     connection.execute("""
-        CREATE TABLE IF NOT EXISTS tools (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            description TEXT NOT NULL,
-            available INTEGER NOT NULL DEFAULT 1
-        )
-    """)
+    CREATE TABLE IF NOT EXISTS requests (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        tool_id INTEGER NOT NULL,
+        borrower TEXT NOT NULL,
+        days INTEGER NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending',
+        FOREIGN KEY (tool_id) REFERENCES tools (id)
+    )
+""")
 
     # Προσθήκη αρχικών εργαλείων μόνο αν ο πίνακας είναι άδειος
     count = connection.execute(
@@ -79,9 +81,48 @@ def add_tool():
         return render_template("success.html", name=name)
 
     return render_template("add_tool.html")
+
 @app.route("/request/<int:tool_id>", methods=["GET", "POST"])
 def request_tool(tool_id):
     connection = get_db_connection()
+
+    tool = connection.execute(
+        "SELECT * FROM tools WHERE id = ?",
+        (tool_id,)
+    ).fetchone()
+
+    if tool is None:
+        connection.close()
+        return "Το εργαλείο δεν βρέθηκε.", 404
+
+    if request.method == "POST":
+        borrower = request.form["borrower"]
+        days = request.form["days"]
+
+        connection.execute(
+            """
+            INSERT INTO requests (tool_id, borrower, days)
+            VALUES (?, ?, ?)
+            """,
+            (tool_id, borrower, days)
+        )
+
+        connection.commit()
+        connection.close()
+
+        return render_template(
+            "request_success.html",
+            tool=tool,
+            borrower=borrower,
+            days=days
+        )
+
+    connection.close()
+
+    return render_template(
+        "request_tool.html",
+        tool=tool
+    )
 
     tool = connection.execute(
         "SELECT * FROM tools WHERE id = ?",
@@ -103,7 +144,42 @@ def request_tool(tool_id):
         "request_tool.html",
         tool=tool
     )
+@app.route("/requests")
+def requests():
+    connection = get_db_connection()
 
+    requests = connection.execute("""
+        SELECT requests.*, tools.name AS tool_name
+        FROM requests
+        JOIN tools ON requests.tool_id = tools.id
+        ORDER BY requests.id DESC
+    """).fetchall()
+
+    connection.close()
+
+    return render_template("requests.html", requests=requests)
+
+@app.route("/requests/<int:request_id>/<action>", methods=["POST"])
+def update_request(request_id, action):
+    if action not in ["approve", "reject"]:
+        return "Μη έγκυρη ενέργεια.", 400
+
+    status = "approved" if action == "approve" else "rejected"
+
+    connection = get_db_connection()
+
+    connection.execute(
+        "UPDATE requests SET status = ? WHERE id = ?",
+        (status, request_id)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return render_template(
+        "request_updated.html",
+        status=status
+    )
 
 if __name__ == "__main__":
     init_db()

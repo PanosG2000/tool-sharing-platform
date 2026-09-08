@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <title>Αίτημα Δανεισμού</title>
+</head>
+<body>
+
+    <h1>Αίτημα Δανεισμού</h1>
+
+    <h2>{{ tool["name"] }}</h2>
+
+    <p>{{ tool["description"] }}</p>
+
+    <form method="POST">
+		<label for="borrower">Ονοματεπώνυμο:</label><br>
+		<input type="text" id="borrower" name="borrower" required>
+
+		<br><br>
+        <label for="days">Διάρκεια δανεισμού:</label>
+
+        <select id="days" name="days">
+            <option value="1">1 ημέρα</option>
+            <option value="3">3 ημέρες</option>
+            <option value="7">7 ημέρες</option>
+        </select>
+
+        <br><br>
+
+        <button type="submit">
+            Υποβολή αιτήματος
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="/">Επιστροφή στα εργαλεία</a>
+
+</body>
+</html>
