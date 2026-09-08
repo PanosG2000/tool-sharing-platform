@@ -12,25 +12,27 @@
     <p>Πλατφόρμα δανεισμού εργαλείων.</p>
 
     <h2>Διαθέσιμα εργαλεία</h2>
-	<a href="/add">+ Προσθήκη εργαλείου</a>
+
+    <a href="/add">+ Προσθήκη εργαλείου</a>
 
     <ul>
         {% for tool in tools %}
             <li>
-			<strong>{{ tool["name"] }}</strong>
-			- {{ tool["description"] }}
+                <strong>{{ tool["name"] }}</strong>
+                - {{ tool["description"] }}
 
-    <br>
-	<br><br>
+                <br><br>
 
-<a href="/requests">
-    Προβολή αιτημάτων δανεισμού
-</a>
+                <a href="/requests">
+                    Προβολή αιτημάτων δανεισμού
+                </a>
 
-    <a href="/request/{{ tool['id'] }}">
-        Αίτημα δανεισμού
-    </a>
-</li>
+                <br><br>
+
+                <a href="/request/{{ tool['id'] }}">
+                    Αίτημα δανεισμού
+                </a>
+            </li>
         {% endfor %}
     </ul>
 
