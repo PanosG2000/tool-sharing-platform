@@ -15,16 +15,27 @@ def get_db_connection():
 def init_db():
     connection = get_db_connection()
 
+    # Πίνακας εργαλείων
     connection.execute("""
-    CREATE TABLE IF NOT EXISTS requests (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        tool_id INTEGER NOT NULL,
-        borrower TEXT NOT NULL,
-        days INTEGER NOT NULL,
-        status TEXT NOT NULL DEFAULT 'pending',
-        FOREIGN KEY (tool_id) REFERENCES tools (id)
-    )
-""")
+        CREATE TABLE IF NOT EXISTS tools (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            description TEXT NOT NULL,
+            available INTEGER NOT NULL DEFAULT 1
+        )
+    """)
+
+    # Πίνακας αιτημάτων δανεισμού
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tool_id INTEGER NOT NULL,
+            borrower TEXT NOT NULL,
+            days INTEGER NOT NULL,
+            status TEXT NOT NULL DEFAULT 'pending',
+            FOREIGN KEY (tool_id) REFERENCES tools (id)
+        )
+    """)
 
     # Προσθήκη αρχικών εργαλείων μόνο αν ο πίνακας είναι άδειος
     count = connection.execute(
@@ -33,9 +44,21 @@ def init_db():
 
     if count == 0:
         tools = [
-            ("Τρυπάνι Bosch", "Ηλεκτρικό τρυπάνι για εργασίες στο σπίτι.", 1),
-            ("Χλοοκοπτικό", "Χλοοκοπτικό για εργασίες κήπου.", 1),
-            ("Σκάλα αλουμινίου", "Πτυσσόμενη σκάλα αλουμινίου.", 1)
+            (
+                "Τρυπάνι Bosch",
+                "Ηλεκτρικό τρυπάνι για εργασίες στο σπίτι.",
+                1
+            ),
+            (
+                "Χλοοκοπτικό",
+                "Χλοοκοπτικό για εργασίες κήπου.",
+                1
+            ),
+            (
+                "Σκάλα αλουμινίου",
+                "Πτυσσόμενη σκάλα αλουμινίου.",
+                1
+            )
         ]
 
         connection.executemany(
@@ -48,7 +71,6 @@ def init_db():
 
     connection.commit()
     connection.close()
-
 
 @app.route("/")
 def home():
