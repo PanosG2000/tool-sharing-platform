@@ -55,7 +55,7 @@ def init_db():
                 1
             ),
             (
-                
+
                 "Σκάλα αλουμινίου",
                 "Πτυσσόμενη σκάλα αλουμινίου.",
                 1
@@ -206,4 +206,4 @@ def update_request(request_id, action):
 
 if __name__ == "__main__":
     init_db()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
